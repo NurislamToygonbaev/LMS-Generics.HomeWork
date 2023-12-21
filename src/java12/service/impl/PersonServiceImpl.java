@@ -1,5 +1,6 @@
 package java12.service.impl;
 
+import java12.NotFoundException;
 import java12.dao.impl.PersonDaoImpl;
 import java12.model.Person;
 import java12.service.GenericService;
@@ -28,7 +29,12 @@ public class PersonServiceImpl implements GenericService<Person> {
 
     @Override
     public Person getById(Long id) {
-        return personDao.getById(id);
+        try {
+            return personDao.getById(id);
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 
     @Override
@@ -37,19 +43,40 @@ public class PersonServiceImpl implements GenericService<Person> {
     }
 
     @Override
-    public List<Person> sortByName() {
+    public List<Person> sortByName(int i) {
         List<Person> list = new ArrayList<>(personDao.getAll());
-        Comparator<Person> comparator = Comparator.comparing(Person::getName);
-        list.sort(comparator);
-        return list;
+        if (i == 1) {
+            Comparator<Person> comparator = Comparator.comparing(Person::getName);
+            list.sort(comparator);
+            return list;
+        } else if (i == 2) {
+            Comparator<Person> comparator = Comparator.comparing(Person::getName).reversed();
+            list.sort(comparator);
+            return list;
+        }
+        throw new NotFoundException("write correct!!!");
     }
 
     @Override
-    public List<Person> filterByGender() {
-        List<Person> list = new ArrayList<>(personDao.getAll());
-        Comparator<Person> comparator = Comparator.comparing(Person::getGender);
-        list.sort(comparator);
-        return list;
+    public List<Person> filterByGender(int i) {
+        List<Person> list = new ArrayList<>();
+
+        if (i == 1) {
+            for (Person person : personDao.getAll()) {
+                if ("female".equalsIgnoreCase(String.valueOf(person.getGender()))) {
+                    list.add(person);
+                }
+            }
+            return list;
+        } else if (i == 2) {
+            for (Person person : personDao.getAll()) {
+                if ("male".equalsIgnoreCase(String.valueOf(person.getGender()))) {
+                    list.add(person);
+                }
+            }
+            return list;
+        }
+        throw new NotFoundException("write correct!!!");
     }
 
     @Override

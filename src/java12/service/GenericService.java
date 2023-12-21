@@ -12,9 +12,9 @@ public interface GenericService<T> {
 
     List<T> getAll();
 
-    List<T> sortByName();
+    List<T> sortByName(int i);
 
-    List<T> filterByGender();
+    List<T> filterByGender(int i);
 
     List<T> clear();
 }
